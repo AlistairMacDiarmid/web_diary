@@ -16,10 +16,18 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-# Enable CORS for frontend integration
+app = FastAPI()
+
+# Configure CORS so Vercel frontend can talk to Render
+origins = [
+    "https://web-diary-one.vercel.app",
+    "http://localhost:5173", 
+    "http://localhost:3000",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
