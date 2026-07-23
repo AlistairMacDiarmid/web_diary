@@ -1,8 +1,37 @@
 import axios from 'axios';
 import type { DiaryEntry, LoginCredentials, RegisterCredentials } from '../types';
 
-// Read API base URL from Vite environment variables, falling back to localhost if undefined
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const LOCAL_API_URL = 'http://localhost:8000';
+const PRODUCTION_API_URL = 'https://web-diary-blcg.onrender.com';
+
+/**
+ * Resolve the API host without ever sending API calls to the static Vercel
+ * frontend. A Vercel URL in VITE_API_URL is a deployment misconfiguration and
+ * causes preflight requests to redirect before they can reach FastAPI.
+ */
+function getApiUrl() {
+  const configuredUrl = import.meta.env.VITE_API_URL?.trim();
+  const fallbackUrl = import.meta.env.DEV ? LOCAL_API_URL : PRODUCTION_API_URL;
+
+  if (!configuredUrl) {
+    return fallbackUrl;
+  }
+
+  try {
+    const hostname = new URL(configuredUrl).hostname;
+    if (hostname.endsWith('.vercel.app')) {
+      console.warn('Ignoring Vercel URL configured as API host. Using the Render API.');
+      return fallbackUrl;
+    }
+  } catch {
+    console.warn('Ignoring invalid VITE_API_URL. Using the default API host.');
+    return fallbackUrl;
+  }
+
+  return configuredUrl.replace(/\/+$/, '');
+}
+
+const API_URL = getApiUrl();
 
 const api = axios.create({
   baseURL: API_URL,
