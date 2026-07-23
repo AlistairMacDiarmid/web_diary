@@ -1,3 +1,4 @@
+import os
 from datetime import datetime, timedelta
 from database import Base, engine, get_db
 from fastapi import Depends, FastAPI, HTTPException, status
@@ -16,18 +17,27 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
-app = FastAPI()
-
-# Configure CORS so Vercel frontend can talk to Render
-origins = [
+# Allow local development plus the production Vercel site.  Additional custom
+# domains can be supplied by the deployment with CORS_ORIGINS as a comma-
+# separated list; this keeps the browser allow-list explicit.
+default_origins = {
     "https://web-diary-one.vercel.app",
-    "http://localhost:5173", 
+    "http://localhost:5173",
     "http://localhost:3000",
-]
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:3000",
+}
+configured_origins = {
+    origin.strip()
+    for origin in os.getenv("CORS_ORIGINS", "").split(",")
+    if origin.strip()
+}
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=sorted(default_origins | configured_origins),
+    # Vercel preview deployments have a different origin on every deployment.
+    allow_origin_regex=r"https://web-diary(?:-[a-z0-9-]+)?\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
