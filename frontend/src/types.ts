@@ -1,15 +1,22 @@
-// This file defines TypeScript interfaces for the diary entry data structures used in the application.
-
-// The DiaryEntry interface represents a diary entry as returned by the backend API, including an ID and a timestamp.
+// Represents a single diary entry record
 export interface DiaryEntry {
-    id: number;
-    title: string;
-    content: string;
-    created_at: string; // ISO 8601 date string
+  id: number;
+  title: string;
+  content: string;
+  created_at: string;
+  owner_id: number;
 }
 
-// This interface is used when creating a new diary entry, where the ID and created_at fields are not required.
-export interface DiaryEntryCreate {
-    title: string;
-    content: string;
+// Credentials structure required for user login
+export interface LoginCredentials {
+  email?: string;
+  username?: string;
+  password: string;
+}
+
+// Credentials structure required for registering a new user account
+export interface RegisterCredentials {
+  email?: string;
+  username?: string;
+  password: string;
 }

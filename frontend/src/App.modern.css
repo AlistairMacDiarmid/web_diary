@@ -1,0 +1,57 @@
+/* Import Tailwind CSS v4 base framework */
+@import "tailwindcss";
+
+/* Import custom Google Fonts for the modern theme (Space Grotesk, Inter, and JetBrains Mono) */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* Utility class for modern display headings (Space Grotesk) */
+.font-modern-display {
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+/* Utility class for clean modern body text (Inter) */
+.font-modern-body {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Utility class for monospace elements like timestamps and tags (JetBrains Mono) */
+.font-modern-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Container wrapper class for modern cards */
+.modern-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+/* Pseudo-element creating the vertical accent stripe along the left edge of modern cards */
+.modern-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 8px;
+  background: #5B5BD6;
+  border-top-right-radius: 16px;
+  border-top-left-radius: 16px;
+}
+
+/* Keyframe animation for smooth entry card fade-in transitions */
+@keyframes modernFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Utility class to apply the modern fade-in animation */
+.modern-fade-in {
+  animation: modernFadeIn 0.25s ease-out both;
+}

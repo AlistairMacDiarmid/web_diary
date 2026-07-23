@@ -1,18 +1,85 @@
 import axios from 'axios';
-import type { DiaryEntry, DiaryEntryCreate } from '../types';
+import type { DiaryEntry, LoginCredentials, RegisterCredentials } from '../types';
 
-// Set the base URL for the API from environment variables, with a fallback to localhost
-const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+// Read API base URL from Vite environment variables, falling back to localhost if undefined
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
-// Fetch all diary entries from the backend API
-export const getEntries = async (): Promise<DiaryEntry[]> => {
-  const response = await axios.get<DiaryEntry[]>(`${API_URL}/entries/`);
+const api = axios.create({
+  baseURL: API_URL,
+});
+
+// Automatically inject the JWT token into headers if it exists in localStorage
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+
+// --- User Authentication Endpoints ---
+
+// Registers a new user with the provided credentials
+export const registerUser = async (credentials: RegisterCredentials) => {
+  /*** 
+   * Registers a new user with the provided credentials
+   * @param credentials - The user's registration credentials
+   * @returns A promise resolving to the created user object
+   ***/
+  const response = await api.post('/register', credentials);
   return response.data;
 };
 
-
-// Create a new diary entry by sending a POST request to the backend API
-export const createEntry = async (entryData: DiaryEntryCreate): Promise<DiaryEntry> => {
-  const response = await axios.post<DiaryEntry>(`${API_URL}/entries/`, entryData);
+export const loginUser = async (credentials: LoginCredentials) => {
+  const formData = new URLSearchParams();
+  // Use email if provided, otherwise fallback to username
+  formData.append('username', credentials.email || credentials.username || '');
+  formData.append('password', credentials.password);
+  
+  const response = await api.post('/token', formData, {
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  });
+  
+  if (response.data.access_token) {
+    localStorage.setItem('token', response.data.access_token);
+  }
   return response.data;
+};
+
+export const logoutUser = () => {
+  /***
+   * Logs out the current user by removing the JWT token from localStorage
+   ***/
+  localStorage.removeItem('token');
+};
+
+// --- Diary Entry Endpoints ---
+
+export const getEntries = async (): Promise<DiaryEntry[]> => {
+  /*** 
+   * Retrieves all diary entries
+   * @returns A promise resolving to the list of diary entries
+   ***/
+  const response = await api.get('/entries/');
+  return response.data;
+};
+
+export const createEntry = async (entry: { title: string; content: string }): Promise<DiaryEntry> => {
+  /***
+   * Creates a new diary entry with the provided title and content
+   * @param entry - An object containing the title and content of the new diary entry
+   * @returns A promise resolving to the created diary entry
+   * */
+  const response = await api.post('/entries/', entry);
+  return response.data;
+};
+
+export const deleteEntry = async (id: number): Promise<void> => {
+  /***
+   * Deletes a diary entry by its ID
+   * @param id - The ID of the diary entry to delete
+   * @returns A promise that resolves when the entry is deleted
+   ***/
+  await api.delete(`/entries/${id}`);
 };

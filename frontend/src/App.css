@@ -1,0 +1,68 @@
+/* Import Tailwind CSS v4 base framework */
+@import "tailwindcss";
+
+/* Import custom web fonts from Google Fonts for Classic and Handwritten styles */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&family=Caveat:wght@500;700&display=swap');
+
+/* Utility class for primary display typography (Fraunces serif) */
+.font-display {
+  font-family: 'Fraunces', serif;
+}
+
+/* Utility class for handwritten accent text (Caveat cursive) */
+.font-hand {
+  font-family: 'Caveat', cursive;
+}
+
+/* Utility class for clean body copy (Inter sans-serif) */
+.font-body {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Custom styled ruled lines background for textarea inputs resembling notebook paper */
+.ruled-textarea {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 27px,
+    rgba(31, 42, 68, 0.12) 28px
+  );
+  background-attachment: local;
+  line-height: 28px;
+}
+
+/* Container wrapper class for the dog-ear paper effect */
+.dog-ear {
+  position: relative;
+}
+
+/* Pseudo-element creating the folded corner graphic on classic diary pages */
+.dog-ear::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 22px 22px 0;
+  border-color: transparent #DCD3BC transparent transparent;
+  filter: drop-shadow(-1px 1px 1px rgba(31, 42, 68, 0.15));
+}
+
+/* Keyframe animation for smooth page fade-in transitions */
+@keyframes fadeInPage {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Utility class to apply the page fade-in animation */
+.fade-in-page {
+  animation: fadeInPage 0.35s ease-out both;
+}
