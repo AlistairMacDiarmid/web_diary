@@ -7,7 +7,7 @@ from models import DiaryEntry, User
 from pydantic import BaseModel
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
-import jwt
+from jose import jwt
 import bcrypt
 
 
